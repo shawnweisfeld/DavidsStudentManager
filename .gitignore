@@ -42,7 +42,7 @@ local.properties
 *.sln.docstates
 
 # Build results
-
+App_Data/
 [Dd]ebug/
 [Rr]elease/
 x64/
