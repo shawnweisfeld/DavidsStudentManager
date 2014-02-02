@@ -1,13 +1,16 @@
 ﻿Imports System.IO
+Imports System.Data.Entity
+
 Public Class _Default
     Inherits Page
 
-    Dim students As List(Of Student)
+    'Dim students As List(Of Student)
+    Dim dbContext As New AppDbContext()
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As EventArgs) Handles Me.Load
 
         'GetFromMemory()
-        GetFromFlatFile()
+        'GetFromFlatFile()
 
         RefreshGrid()
 
@@ -15,22 +18,23 @@ Public Class _Default
 
     Private Sub RefreshGrid()
 
-        grdStudents.DataSource = students
+        grdStudents.DataSource = dbContext.Students.ToList()
         grdStudents.DataBind()
 
         'SaveToMemory()
-        SaveToFlatFile()
+        'SaveToFlatFile()
 
     End Sub
 
     Protected Sub btnAdd_Click(sender As Object, e As EventArgs) Handles btnAdd.Click
 
         Dim stu = New Student()
-        stu.ID = GetNextID()
+        'stu.ID = GetNextID()
         stu.FirstName = txtFirstName.Text
         stu.LastName = txtLastName.Text
 
-        students.Add(stu)
+        dbContext.Students.Add(stu)
+        dbContext.SaveChanges()
 
         RefreshGrid()
 
@@ -39,63 +43,63 @@ Public Class _Default
 
     End Sub
 
-    Public Function GetNextID() As Integer
+    'Public Function GetNextID() As Integer
 
-        If (students.Any()) Then
-            Return students.Max(Function(x) x.ID) + 1
-        Else
-            Return 1
-        End If
+    '    If (students.Any()) Then
+    '        Return students.Max(Function(x) x.ID) + 1
+    '    Else
+    '        Return 1
+    '    End If
 
-    End Function
+    'End Function
 
-    Private Sub GetFromMemory()
+    'Private Sub GetFromMemory()
 
-        students = TryCast(Session("students"), List(Of Student))
+    '    students = TryCast(Session("students"), List(Of Student))
 
-        If (students Is Nothing) Then
-            students = New List(Of Student)()
-        End If
-
-
-    End Sub
-
-    Private Sub SaveToMemory()
-
-        Session("students") = students
-
-    End Sub
+    '    If (students Is Nothing) Then
+    '        students = New List(Of Student)()
+    '    End If
 
 
-    Private Sub GetFromFlatFile()
+    'End Sub
 
-        students = New List(Of Student)()
+    'Private Sub SaveToMemory()
 
-        If File.Exists(Server.MapPath("students.txt")) Then
+    '    Session("students") = students
 
-            For Each line As String In File.ReadAllLines(Server.MapPath("students.txt"))
-                Dim parts = line.Split(",")
-                Dim stu = New Student()
-                stu.ID = CInt(parts(0))
-                stu.FirstName = parts(1)
-                stu.LastName = parts(2)
+    'End Sub
 
-                students.Add(stu)
-            Next
-        End If
 
-    End Sub
+    'Private Sub GetFromFlatFile()
 
-    Private Sub SaveToFlatFile()
+    '    students = New List(Of Student)()
 
-        Dim lines = New List(Of String)
+    '    If File.Exists(Server.MapPath("students.txt")) Then
 
-        For Each stu As Student In students
-            lines.Add(String.Join(",", stu.ID, stu.FirstName, stu.LastName))
-        Next
+    '        For Each line As String In File.ReadAllLines(Server.MapPath("students.txt"))
+    '            Dim parts = line.Split(",")
+    '            Dim stu = New Student()
+    '            stu.ID = CInt(parts(0))
+    '            stu.FirstName = parts(1)
+    '            stu.LastName = parts(2)
 
-        File.WriteAllLines(Server.MapPath("students.txt"), lines)
+    '            students.Add(stu)
+    '        Next
+    '    End If
 
-    End Sub
+    'End Sub
+
+    'Private Sub SaveToFlatFile()
+
+    '    Dim lines = New List(Of String)
+
+    '    For Each stu As Student In students
+    '        lines.Add(String.Join(",", stu.ID, stu.FirstName, stu.LastName))
+    '    Next
+
+    '    File.WriteAllLines(Server.MapPath("students.txt"), lines)
+
+    'End Sub
 
 End Class
