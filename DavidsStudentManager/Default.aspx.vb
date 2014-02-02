@@ -4,13 +4,13 @@ Imports System.Data.Entity
 Public Class _Default
     Inherits Page
 
-    'Dim students As List(Of Student)
-    Dim dbContext As New AppDbContext()
+    'Dim myContext As New AppDbContext()
+    'Dim myContext As New FlatFileContext()
+    Dim myContext As MemoryContext
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As EventArgs) Handles Me.Load
 
-        'GetFromMemory()
-        'GetFromFlatFile()
+        myContext = New MemoryContext()
 
         RefreshGrid()
 
@@ -18,11 +18,8 @@ Public Class _Default
 
     Private Sub RefreshGrid()
 
-        grdStudents.DataSource = dbContext.Students.ToList()
+        grdStudents.DataSource = myContext.Students.ToList()
         grdStudents.DataBind()
-
-        'SaveToMemory()
-        'SaveToFlatFile()
 
     End Sub
 
@@ -33,8 +30,8 @@ Public Class _Default
         stu.FirstName = txtFirstName.Text
         stu.LastName = txtLastName.Text
 
-        dbContext.Students.Add(stu)
-        dbContext.SaveChanges()
+        myContext.Students.Add(stu)
+        myContext.SaveChanges()
 
         RefreshGrid()
 
@@ -53,53 +50,5 @@ Public Class _Default
 
     'End Function
 
-    'Private Sub GetFromMemory()
-
-    '    students = TryCast(Session("students"), List(Of Student))
-
-    '    If (students Is Nothing) Then
-    '        students = New List(Of Student)()
-    '    End If
-
-
-    'End Sub
-
-    'Private Sub SaveToMemory()
-
-    '    Session("students") = students
-
-    'End Sub
-
-
-    'Private Sub GetFromFlatFile()
-
-    '    students = New List(Of Student)()
-
-    '    If File.Exists(Server.MapPath("students.txt")) Then
-
-    '        For Each line As String In File.ReadAllLines(Server.MapPath("students.txt"))
-    '            Dim parts = line.Split(",")
-    '            Dim stu = New Student()
-    '            stu.ID = CInt(parts(0))
-    '            stu.FirstName = parts(1)
-    '            stu.LastName = parts(2)
-
-    '            students.Add(stu)
-    '        Next
-    '    End If
-
-    'End Sub
-
-    'Private Sub SaveToFlatFile()
-
-    '    Dim lines = New List(Of String)
-
-    '    For Each stu As Student In students
-    '        lines.Add(String.Join(",", stu.ID, stu.FirstName, stu.LastName))
-    '    Next
-
-    '    File.WriteAllLines(Server.MapPath("students.txt"), lines)
-
-    'End Sub
 
 End Class
